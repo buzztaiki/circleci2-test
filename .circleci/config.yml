@@ -11,7 +11,7 @@ jobs:
       - run: false || echo 'export FAILED=1' >> $BASH_ENV
       - run: |
           [ -e $BASH_ENV ] && . $BASH_ENV
-          [ -z "$FAILED" ] || false
+          ! [ -n "$FAILED" ]
   failed_flag_success:
     docker:
       - image: busybox:latest
@@ -20,7 +20,7 @@ jobs:
       - run: true || echo 'export FAILED=1' >> $BASH_ENV
       - run: |
           [ -e $BASH_ENV ] && . $BASH_ENV
-          [ -z "$FAILED" ] || false
+          ! [ -n "$FAILED" ]
   failed_flag_env_failure:
     docker:
       - image: busybox:latest
