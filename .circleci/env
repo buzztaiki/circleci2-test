@@ -1,0 +1,18 @@
+#!/bin/bash
+
+save() {
+  [ $# -eq 1 ] || exit 1
+  echo "export $1=1" >> "$BASH_ENV"
+}
+
+exists() {
+  [ $# -eq 1 ] || exit 1
+  [ -n "${!1}" ]
+}
+
+case "$1" in
+  save|exists) "$@" ;;
+  *)
+    echo "invalid subcommand '$1'" 1>&2
+    exit 1
+esac

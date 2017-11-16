@@ -21,6 +21,22 @@ jobs:
       - run: |
           [ -e $BASH_ENV ] && . $BASH_ENV
           [ -z "$FAILED" ] || false
+  failed_flag_env_failure:
+    docker:
+      - image: busybox:latest
+    steps:
+      - checkout
+      - run: false || .circleci/env save FAILED
+      - run: true || .circleci/env save FAILED
+      - run: false || .circleci/env save FAILED
+      - run: '! .circleci/env exists FAILED'
+  failed_flag_env_success:
+    docker:
+      - image: busybox:latest
+    steps:
+      - checkout
+      - run: true || .circleci/env save FAILED
+      - run: '! .circleci/env exists FAILED'
   when_always_failure:
     docker:
       - image: busybox:latest
@@ -49,5 +65,7 @@ workflows:
     jobs:
       - failed_flag_failure
       - failed_flag_success
+      - failed_flag_env_failure
+      - failed_flag_env_success
       - when_always_failure
       - when_always_success
