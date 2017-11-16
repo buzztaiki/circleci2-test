@@ -1,9 +1,29 @@
 version: 2
 
 jobs:
-  build:
+  failed_flag_failure:
     docker:
       - image: busybox:latest
     steps:
       - checkout
-      - run: echo ok
+      - run: false || echo 'export FAILED=1' >> $BASH_ENV
+      - run: true || echo 'export FAILED=1' >> $BASH_ENV
+      - run: false || echo 'export FAILED=1' >> $BASH_ENV
+      - run: |
+          [ -e $BASH_ENV ] && . $BASH_ENV
+          [ -z "$FAILED" ] || false
+  failed_flag_success:
+    docker:
+      - image: busybox:latest
+    steps:
+      - checkout
+      - run: true || echo 'export FAILED=1' >> $BASH_ENV
+      - run: |
+          [ -e $BASH_ENV ] && . $BASH_ENV
+          [ -z "$FAILED" ] || false
+workflows:
+  version: 2
+  all:
+    jobs:
+      - failed_flag_failure
+      - failed_flag_success
